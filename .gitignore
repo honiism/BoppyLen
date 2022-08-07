@@ -3,6 +3,7 @@
 bin/
 .env
 .vscode/
+*.class
 
 # Ignore Gradle GUI config
 gradle-app.setting
