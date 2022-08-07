@@ -29,12 +29,10 @@ import com.badlogic.gdx.math.Vector2;
 
 public class GiftBox {
     
-    private final Vector2 position;
+    private final Vector2 position = new Vector2();;
     private final List<Sprite> sprites = new ArrayList<>();
 
     public GiftBox() {
-        this.position = new Vector2();
-
         this.sprites.add(new Sprite(new Texture("gdx/gift_pink.png")));
         this.sprites.add(new Sprite(new Texture("gdx/gift_blue.png")));
         this.sprites.add(new Sprite(new Texture("gdx/gift_purple.png")));

@@ -27,12 +27,11 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Background {
 
-    private final Vector2 position;
+    private final Vector2 position = new Vector2();
     private Texture bg;
 
     public Background() {
         this.bg = new Texture("gfx/bg.png");
-        this.position = new Vector2();
     }
 
     public void setBg(float hue) {
