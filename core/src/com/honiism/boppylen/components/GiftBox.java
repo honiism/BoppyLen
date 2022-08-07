@@ -29,7 +29,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class GiftBox {
     
-    private final Vector2 position = new Vector2();;
+    private final Vector2 position = new Vector2();
     private final List<Sprite> sprites = new ArrayList<>();
 
     public GiftBox() {
