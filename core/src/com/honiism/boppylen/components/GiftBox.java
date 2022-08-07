@@ -19,6 +19,41 @@
 
 package com.honiism.boppylen.components;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Vector2;
+
 public class GiftBox {
     
+    private final Vector2 position;
+    private final List<Sprite> sprites = new ArrayList<>();
+
+    public GiftBox() {
+        this.position = new Vector2();
+
+        this.sprites.add(new Sprite(new Texture("gdx/gift_pink.png")));
+        this.sprites.add(new Sprite(new Texture("gdx/gift_blue.png")));
+        this.sprites.add(new Sprite(new Texture("gdx/gift_purple.png")));
+    }
+
+    public Vector2 getPos() {
+        return position;
+    }
+
+    public List<Sprite> getSprites() {
+        return sprites;
+    }
+
+    public Sprite getSprite(int index) {
+        return sprites.get(index);
+    }
+
+    public Sprite getRandomSprite() {
+        Random r = new Random();
+        return sprites.get(r.nextInt(sprites.size()));
+    }
 }
