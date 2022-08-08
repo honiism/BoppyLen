@@ -22,7 +22,6 @@ package com.honiism.boppylen.components;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
-import com.honiism.boppylen.tools.PlayerState;
 
 public class Player {
     
@@ -34,15 +33,15 @@ public class Player {
     private float acceleration;
     private Sprite currentSprite;
 
-    public Player(float x, float y, float veloX, float veloY, float acceleration) {
+    public Player(float x, float y, float veloX, float veloY, float acceleration, Texture playerTex) {
         position.x = x;
         position.y = y;
         velocity.x = veloX;
         velocity.y = veloY;
         this.acceleration = acceleration;
-        rightSprite = new Sprite(new Texture("gfx/len_def.png"));
+        rightSprite = new Sprite(playerTex);
         currentSprite = rightSprite;
-        leftSprite = new Sprite(new Texture("gfx/len_def.png"));
+        leftSprite = new Sprite(playerTex);
 
         leftSprite.flip(true, false);
     }
@@ -61,13 +60,5 @@ public class Player {
 
     public Sprite getCurrentSprite() {
         return currentSprite;
-    }
-
-    public void switchCurrentSprite(PlayerState state) {
-        switch(state) {
-            case DEFAULT -> currentSprite = new Sprite(new Texture("gfx/len_def.png"));
-            case HAPPY -> currentSprite = new Sprite(new Texture("gfx/len_happy.png"));
-            case HURT -> currentSprite = new Sprite(new Texture("gfx/len_hurt.png"));
-        }
     }
 }

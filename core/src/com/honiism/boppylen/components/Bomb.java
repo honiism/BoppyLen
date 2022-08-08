@@ -26,7 +26,11 @@ import com.badlogic.gdx.math.Vector2;
 public class Bomb {
     
     private final Vector2 position = new Vector2();
-    private final Sprite sprite = new Sprite(new Texture("gfx/bomb.png"));
+    private final Sprite sprite;
+
+    public Bomb(Texture texture) {
+        this.sprite = new Sprite(texture);
+    }
 
     public Vector2 getPos() {
         return position;
