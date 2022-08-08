@@ -6,9 +6,8 @@ bin/
 *.class
 
 # Testing files
-bucket.png
-droplet.png
 Test.java
+TestDesktopLaunch.java
 
 # Ignore Gradle GUI config
 gradle-app.setting
