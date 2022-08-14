@@ -19,18 +19,30 @@
 
 package com.honiism.boppylen;
 
-import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Screen;
+import com.honiism.boppylen.screens.MenuScreen;
 
-public class BoppyLen extends ApplicationAdapter {
-	
-	
-	@Override
-	public void create () {
+public class BoppyLen extends Game {
 
-	}
+    @Override
+    public void create() {
+        changeScreen(new MenuScreen(this));
+    }
 
-	@Override
-	public void render () {
-				
-	}
+    @Override
+    public void render() {
+        //Render the current Screen
+        super.render();
+    }
+
+    public void changeScreen(Screen newScreen) {
+        Screen oldScreen = getScreen();
+
+        setScreen(newScreen);
+
+        if (oldScreen != null) {
+            oldScreen.dispose();
+        }
+    }
 }

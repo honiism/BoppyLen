@@ -29,8 +29,9 @@ public class DesktopLauncher {
         BoppyLen game = new BoppyLen();
 
 		config.setForegroundFPS(60);
-		config.setTitle("boppylen");
-        config.setWindowedMode(800, 480);
+		config.setTitle("BoppyLen");
+        config.setWindowedMode(640, 480);
+        config.setResizable(false);
 
 		new Lwjgl3Application(game, config);
 	}
