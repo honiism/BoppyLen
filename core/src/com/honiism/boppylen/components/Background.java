@@ -34,7 +34,9 @@ public class Background {
         this.bg = new Texture("gfx/bg.png");
     }
 
-    public void setBg(float hue) {
+    public Background setBg(float hue) {
+        this.bg.getTextureData().prepare();
+        
         Pixmap bgPixmap = this.bg.getTextureData().consumePixmap();
         Color color = new Color().fromHsv(hue, 1, 1);
 
@@ -46,6 +48,7 @@ public class Background {
         bgPixmap.setColor(color);
 
         bg = new Texture(bgPixmap);
+        return this;
     }
 
     public Texture getBg() {
