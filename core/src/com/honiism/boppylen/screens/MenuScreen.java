@@ -79,8 +79,6 @@ public class MenuScreen implements Screen {
         menuBg = new Sprite(new Texture("gfx/bg.png"));
         playButtonTexRegDraw = new TextureRegionDrawable(new Texture("gfx/play_button.png"));
 
-        menuBg.setColor(244f, 180f, 219f, 1f); //TODO: change color of the bg
-
         lenMenu.setPosition(Gdx.graphics.getWidth() / 2 - lenMenu.getWidth() / 2,
             Gdx.graphics.getHeight() / 2 - lenMenu.getHeight() / 2);
             
