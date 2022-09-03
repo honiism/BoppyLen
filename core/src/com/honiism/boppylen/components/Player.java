@@ -25,19 +25,18 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Player {
     
-    private final Vector2 position = new Vector2();
-    private final Vector2 velocity = new Vector2();;
+    private Vector2 position = new Vector2();
     private final Sprite rightSprite;
     private final Sprite leftSprite;
 
     private float acceleration;
+    private float velocity;
     private Sprite currentSprite;
 
-    public Player(float x, float y, float veloX, float veloY, float acceleration, Texture playerTex) {
+    public Player(float x, float y, float velocity, float acceleration, Texture playerTex) {
         position.x = x;
         position.y = y;
-        velocity.x = veloX;
-        velocity.y = veloY;
+        this.velocity = velocity;
         this.acceleration = acceleration;
         rightSprite = new Sprite(playerTex);
         currentSprite = rightSprite;
@@ -50,12 +49,32 @@ public class Player {
         return position;
     }
 
-    public Vector2 getVelocit() {
+    public void setPos(float x, float y) {
+        getPos().set(x, y);
+    }
+
+    public void setPosX(float x) {
+        getPos().x = x;
+    }
+
+    public void setPosY(float y) {
+        getPos().y = y;
+    }
+
+    public float getVelocity() {
         return velocity;
+    }
+
+    public void setVelocity(float velocity) {
+        this.velocity = velocity;
     }
 
     public float getAcceleration() {
         return acceleration;
+    }
+
+    public void setAcceleration(float acceleration) {
+        this.acceleration = acceleration;
     }
 
     public Sprite getCurrentSprite() {

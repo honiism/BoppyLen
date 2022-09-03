@@ -40,6 +40,7 @@ project(":desktop") {
     dependencies {
         implementation project(":core")
         implementation 'io.github.cdimascio:dotenv-java:2.2.4'
+        implementation 'com.github.tommyettinger:colorful:0.8.2'
         api "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
         api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
         api "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"

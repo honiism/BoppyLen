@@ -112,6 +112,16 @@ public class MenuScreen implements Screen {
     }
 
     @Override
+    public void dispose() {
+        lenMenu.getTexture().dispose();
+        starsMenu.getTexture().dispose();
+        title.getTexture().dispose();
+        menuBg.getTexture().dispose();
+        batch.dispose();
+        stage.dispose();
+    }
+
+    @Override
     public void resize(int width, int height) {
 
     }
@@ -129,16 +139,6 @@ public class MenuScreen implements Screen {
     @Override
     public void hide() {
         
-    }
-
-    @Override
-    public void dispose() {
-        lenMenu.getTexture().dispose();
-        starsMenu.getTexture().dispose();
-        title.getTexture().dispose();
-        menuBg.getTexture().dispose();
-        batch.dispose();
-        stage.dispose();
     }
 
     private void setStage(Stage stage) {
