@@ -17,14 +17,13 @@
  * along with BoppyLen.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.honiism.boppylen.screens;
+package com.honiism.boppylen.states;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -37,30 +36,25 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.honiism.boppylen.BoppyLen;
 import com.honiism.boppylen.components.Bomb;
 import com.honiism.boppylen.components.GiftBox;
 import com.honiism.boppylen.components.Player;
 import com.honiism.boppylen.components.PowerUp;
-import com.honiism.boppylen.tools.GameState;
+import com.honiism.boppylen.tools.GameModes;
 
-public class GameScreen implements Screen {
+public class PlayState extends State {
 
-    private final BoppyLen game;
-	
     private SpriteBatch batch;
     private Stage stage;
     private OrthographicCamera camera;
     private Viewport viewport;
 
-    // fonts
     private FreeTypeFontGenerator fontGenerator;
     private FreeTypeFontParameter fontParameter;
     private BitmapFont font;
     private BitmapFont fontSmall;
     private BitmapFont font20;
 
-    // sprites + textures
     private Sprite gameBg;
     private Sprite gameUI;
     private Sprite barBg;
@@ -69,15 +63,14 @@ public class GameScreen implements Screen {
     private Sprite speedIndicator;
     private Sprite noBombIndicator;
 
-    // components
     private Player player;
     private GiftBox giftBox;
     private List<Sprite> giftBoxes = new ArrayList<>();
     private Bomb bomb;
     private PowerUp[] powerUps = new PowerUp[3];
 
-    // Others
-    private GameState gameState;
+    private GameModes gameMode;
+    /*
     private int beanCount = 0;
     private float startingHeight;
     private float height;
@@ -85,13 +78,11 @@ public class GameScreen implements Screen {
     private float flapForce;
     private float giftBoxMultiplier;
     private boolean jump;
+    */
 
-    public GameScreen(BoppyLen game) {
-        this.game = game;
-    }
+    protected PlayState(GameStateManager gsm) {
+        super(gsm);
 
-    @Override
-    public void show() {
         batch = new SpriteBatch();
         camera = new OrthographicCamera();
         viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camera);
@@ -111,12 +102,12 @@ public class GameScreen implements Screen {
         fontParameter.size = 20;
         font20 = fontGenerator.generateFont(fontParameter);
 
-        gameBg = new Sprite(new Texture("gfx/bg.png"));
+        gameBg = new Sprite(new Texture("gfx/bg_gray.png"));
         gameUI = new Sprite(new Texture("gfx/game_ui.png"));
         barBg = new Sprite(new Texture("gfx/bar_bg.png"));
         retryButton = new Sprite(new Texture("gfx/retry_button.png"));
 
-        player = new Player(295f, 100f, 3f, 0.1f, new Texture("gfx/len_def.png"));
+        player = new Player(295, 200, new Texture("gfx/len_def.png"));
         
         giftBox = new GiftBox(new Texture("gfx/gift_blue.png"),
                 new Texture("gfx/gift_pink.png"),
@@ -132,24 +123,42 @@ public class GameScreen implements Screen {
         powerUps[2] = new PowerUp(noBombIndicator).setPrice(30);
 
         gameUI.setSize(640, 452);
-        player.getCurrentSprite().setPosition(player.getPos().x, player.getPos().y);
+        player.getSprite().setPosition(player.getPos().x, player.getPos().y);
 
         for (int i = 0; i < 5; i++) {
-            giftBoxes.add(giftBox.getRandomSprite());
+            giftBoxes.add(new Sprite(giftBox.getRandomSprite()));
         }
 
         for (Sprite giftBox : giftBoxes) {
             float x = MathUtils.random(giftBox.getWidth(), Gdx.graphics.getWidth() - giftBox.getWidth());
-            float y = MathUtils.random(giftBox.getHeight(), Gdx.graphics.getHeight() - giftBox.getHeight());
+            float y = MathUtils.random(player.getPos().x, Gdx.graphics.getHeight() - giftBox.getHeight());
 
             giftBox.setPosition(x, y);
         }
 
-        gameState = GameState.START;
+        gameMode = GameModes.RUNNING;
     }
 
-	@Override
-	public void render(float delta) {
+    @Override
+    public void handleInput() {
+        if (Gdx.input.justTouched() || Gdx.input.isKeyJustPressed(Keys.SPACE)) {
+            player.jump();
+        }
+    }
+
+    @Override
+    public void update(float dt) {
+        if (gameMode == GameModes.GAME_OVER) {
+            dispose();
+            return;
+        }
+        
+        handleInput();
+        player.update(dt);
+    }
+
+    @Override
+    public void render() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		camera.update();
@@ -157,68 +166,45 @@ public class GameScreen implements Screen {
         
         batch.begin();
 
-        gameBg.draw(batch);
-        player.getCurrentSprite().draw(batch);
-        gameUI.draw(batch);
+        batch.draw(gameBg, camera.position.x - (camera.viewportWidth / 2), 0);
 
         for (Sprite giftBox : giftBoxes) {
             giftBox.draw(batch);
         }
 
+        batch.draw(player.getSprite().getTexture(), player.getPos().x, player.getPos().y);
+        gameUI.draw(batch);
+
         batch.end();
 
         stage.act();
-        stage.draw();
-	}
+        stage.draw();   
+    }
 
     @Override
-	public void dispose() {
-		font.dispose();
+    public void dispose() {
+        font.dispose();
         fontSmall.dispose();
         font20.dispose();
         fontGenerator.dispose();
         gameUI.getTexture().dispose();
         barBg.getTexture().dispose();
         retryButton.getTexture().dispose();
-        player.getCurrentSprite().getTexture().dispose();
+        player.getSprite().getTexture().dispose();
         bomb.getSprite().getTexture().dispose();
+        gameBg.getTexture().dispose();
+        doubleIndicator.getTexture().dispose();
+        speedIndicator.getTexture().dispose();
+        noBombIndicator.getTexture().dispose();
 
         for (Sprite sprite : giftBox.getSprites()) {
             sprite.getTexture().dispose();
         }
 
+        for (Sprite sprite : giftBoxes) {
+            sprite.getTexture().dispose();
+        }
+
         batch.dispose();
-        stage.dispose();
-	}
-
-    @Override
-    public void resize(int width, int height) {
-        
-    }
-
-    @Override
-    public void pause() {
-        
-    }
-
-    @Override
-    public void resume() {
-        
-    }
-
-    @Override
-    public void hide() {
-        
-    }
-
-    private void setStage(Stage stage) {
-        // setting up game vars
-        startingHeight = player.getPos().y;
-        height = 0;
-        health = 100;
-        flapForce = 3;
-        giftBoxMultiplier = 5;
-
-        player.getPos().y += player.getVelocity();
     }
 }

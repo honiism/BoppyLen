@@ -17,32 +17,36 @@
  * along with BoppyLen.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.honiism.boppylen;
+package com.honiism.boppylen.states;
 
-import com.badlogic.gdx.ApplicationAdapter;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
-import com.honiism.boppylen.states.GameStateManager;
-import com.honiism.boppylen.states.MenuState;
+import java.util.Stack;
 
-public class BoppyLen extends ApplicationAdapter {
+public class GameStateManager {
 
-    private GameStateManager gsm;
+    private Stack<State> states;
 
-    @Override
-    public void create() {
-        gsm = new GameStateManager();
-
-        gsm.push(new MenuState(gsm));
-        
-        Gdx.gl.glClearColor(1, 0, 0, 1);
+    public GameStateManager() {
+        states = new Stack<State>();
     }
 
-    @Override
-    public void render() {
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        gsm.update(Gdx.graphics.getDeltaTime());
+    public void push(State state) {
+        states.push(state);
+    }
 
-        gsm.render();
+    public void pop() {
+        states.pop();
+    }
+
+    public void set(State state) {
+        states.pop();
+        states.push(state);
+    }
+
+    public void update(float dt) {
+        states.peek().update(dt);
+    }
+
+    public void render() {
+        states.peek().render();
     }
 }

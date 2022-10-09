@@ -19,7 +19,7 @@
 
 package com.honiism.boppylen.tools;
 
-public enum GameState {
+public enum GameModes {
     START,
     RUNNING,
     GAME_OVER

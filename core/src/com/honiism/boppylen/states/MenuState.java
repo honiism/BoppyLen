@@ -17,10 +17,9 @@
  * along with BoppyLen.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.honiism.boppylen.screens;
+package com.honiism.boppylen.states;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -36,11 +35,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.honiism.boppylen.BoppyLen;
 
-public class MenuScreen implements Screen {
-
-    private final BoppyLen game;
+public class MenuState extends State {
     
     private SpriteBatch batch;
     private OrthographicCamera camera;
@@ -48,22 +44,17 @@ public class MenuScreen implements Screen {
     private Viewport viewport;
     private Table menuTable;
 
-    // sprites + textures
     private Sprite title;
     private Sprite lenMenu;
     private Sprite starsMenu;
     private Sprite menuBg;
 
-    // buttons
     private ImageButton playButton;
     private TextureRegionDrawable playButtonTexRegDraw;
 
-    public MenuScreen(BoppyLen game) {
-        this.game = game;
-    }
+    public MenuState(GameStateManager gsm) {
+        super(gsm);
 
-    @Override
-    public void show() {
         batch = new SpriteBatch();
         camera = new OrthographicCamera();
         viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camera);
@@ -87,12 +78,46 @@ public class MenuScreen implements Screen {
 
         title.setPosition(Gdx.graphics.getWidth() / 2 - title.getWidth() / 2,
             Gdx.graphics.getHeight() / 2 - title.getHeight() / 2);
-
-        setStage(stage);
     }
 
     @Override
-    public void render(float delta) {
+    public void handleInput() {
+        menuTable = new Table();
+        playButton = new ImageButton(playButtonTexRegDraw);
+
+        playButton.addListener(new ClickListener() {
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                Gdx.graphics.setSystemCursor(SystemCursor.Hand);
+            }
+
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+                Gdx.graphics.setSystemCursor(SystemCursor.Arrow);
+            }
+
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                gsm.push(new PlayState(gsm));
+                dispose();
+            }
+        });
+
+        menuTable.add(playButton);
+
+        menuTable.setPosition(Gdx.graphics.getWidth() / 2 - menuTable.getWidth() / 2,
+            (Gdx.graphics.getHeight() / 2 - menuTable.getHeight() / 2) - (title.getHeight() / 2 + playButton.getHeight() / 2));
+
+        stage.addActor(menuTable);
+    }
+
+    @Override
+    public void update(float dt) {
+        handleInput();
+    }
+
+    @Override
+    public void render() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         camera.update();
@@ -119,55 +144,5 @@ public class MenuScreen implements Screen {
         menuBg.getTexture().dispose();
         batch.dispose();
         stage.dispose();
-    }
-
-    @Override
-    public void resize(int width, int height) {
-
-    }
-
-    @Override
-    public void pause() {
-        
-    }
-
-    @Override
-    public void resume() {
-        
-    }
-
-    @Override
-    public void hide() {
-        
-    }
-
-    private void setStage(Stage stage) {
-        menuTable = new Table();
-
-        playButton = new ImageButton(playButtonTexRegDraw);
-
-        playButton.addListener(new ClickListener() {
-            @Override
-            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                Gdx.graphics.setSystemCursor(SystemCursor.Hand);
-            }
-
-            @Override
-            public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
-                Gdx.graphics.setSystemCursor(SystemCursor.Arrow);
-            }
-
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.changeScreen(new GameScreen(game));
-            }
-        });
-
-        menuTable.add(playButton);
-
-        menuTable.setPosition(Gdx.graphics.getWidth() / 2 - menuTable.getWidth() / 2,
-            (Gdx.graphics.getHeight() / 2 - menuTable.getHeight() / 2) - (title.getHeight() / 2 + playButton.getHeight() / 2));
-
-        stage.addActor(menuTable);
     }
 }

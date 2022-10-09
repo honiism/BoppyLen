@@ -19,65 +19,87 @@
 
 package com.honiism.boppylen.components;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector3;
 
 public class Player {
     
-    private Vector2 position = new Vector2();
-    private final Sprite rightSprite;
-    private final Sprite leftSprite;
+    private static final int GRAVITY = -15;
 
-    private float acceleration;
-    private float velocity;
-    private Sprite currentSprite;
+    private final Vector3 position;
+    private final Vector3 velocity;
 
-    public Player(float x, float y, float velocity, float acceleration, Texture playerTex) {
-        position.x = x;
-        position.y = y;
-        this.velocity = velocity;
-        this.acceleration = acceleration;
-        rightSprite = new Sprite(playerTex);
-        currentSprite = rightSprite;
-        leftSprite = new Sprite(playerTex);
+    private Sprite playerSprite;
+    private Rectangle bounds;
+    private int veloX = 100;
 
-        leftSprite.flip(true, false);
+    public Player(float x, float y, Texture playerTex) {
+        position = new Vector3(x, y, 0);
+        velocity = new Vector3(0, 0, 0);
+        playerSprite = new Sprite(playerTex);
+
+        bounds = new Rectangle(x, y, playerTex.getWidth() / 3, playerTex.getHeight());
     }
 
-    public Vector2 getPos() {
+    public void update(float dt) {
+        if (position.y > 0) {
+            velocity.add(0, GRAVITY, 0);
+        }
+        
+        velocity.scl(dt);
+
+        position.add(velocity.x, velocity.y, 0);
+
+        if (position.y < 0) {
+            position.y = 0;
+            velocity.x = 0;
+        }
+        
+        velocity.scl(1 / dt);
+    }
+
+    public void jump() {
+        velocity.y = 250;
+
+        if (getLeft() <= 0 || getRight() >= Gdx.graphics.getWidth()) {
+            veloX *= -1;
+        }
+
+        velocity.x = veloX;
+    }
+
+    public Vector3 getPos() {
         return position;
     }
 
-    public void setPos(float x, float y) {
-        getPos().set(x, y);
+    public void setPos(float x, float y, float z) {
+        getPos().set(x, y, z);
     }
 
-    public void setPosX(float x) {
-        getPos().x = x;
-    }
-
-    public void setPosY(float y) {
-        getPos().y = y;
-    }
-
-    public float getVelocity() {
+    public Vector3 getVelocity() {
         return velocity;
     }
 
-    public void setVelocity(float velocity) {
-        this.velocity = velocity;
+    public void setVelocity(float veloX, float veloY, float veloZ) {
+        this.velocity.set(veloX, veloY, veloZ);
     }
 
-    public float getAcceleration() {
-        return acceleration;
+    public Sprite getSprite() {
+        return playerSprite;
     }
 
-    public void setAcceleration(float acceleration) {
-        this.acceleration = acceleration;
+    public Rectangle getBounds() {
+        return bounds;
     }
 
-    public Sprite getCurrentSprite() {
-        return currentSprite;
+    public float getLeft() {
+        return position.x;
+    }
+
+    public float getRight() {
+        return position.x + playerSprite.getWidth();
     }
 }
