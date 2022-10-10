@@ -27,6 +27,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -45,6 +46,7 @@ import com.honiism.boppylen.tools.GameModes;
 public class PlayState extends State {
 
     private SpriteBatch batch;
+    private SpriteBatch gameUIBatch;
     private Stage stage;
     private OrthographicCamera camera;
     private Viewport viewport;
@@ -70,6 +72,7 @@ public class PlayState extends State {
     private PowerUp[] powerUps = new PowerUp[3];
 
     private GameModes gameMode;
+    private int bgSourceY = 0;
     /*
     private int beanCount = 0;
     private float startingHeight;
@@ -84,6 +87,7 @@ public class PlayState extends State {
         super(gsm);
 
         batch = new SpriteBatch();
+        gameUIBatch = new SpriteBatch();
         camera = new OrthographicCamera();
         viewport = new FitViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), camera);
         stage = new Stage(viewport, batch);
@@ -122,8 +126,8 @@ public class PlayState extends State {
         powerUps[1] = new PowerUp(speedIndicator).setPrice(5);
         powerUps[2] = new PowerUp(noBombIndicator).setPrice(30);
 
+        gameBg.getTexture().setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
         gameUI.setSize(640, 452);
-        player.getSprite().setPosition(player.getPos().x, player.getPos().y);
 
         for (int i = 0; i < 5; i++) {
             giftBoxes.add(new Sprite(giftBox.getRandomSprite()));
@@ -152,6 +156,11 @@ public class PlayState extends State {
             dispose();
             return;
         }
+
+        if (player.getPos().y <= 0) {
+            camera.position.set(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, 0);
+            camera.update();
+        }
         
         handleInput();
         player.update(dt);
@@ -161,21 +170,31 @@ public class PlayState extends State {
     public void render() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        camera.position.set(Gdx.graphics.getWidth() / 2, player.getPos().y, 0);
 		camera.update();
+
         batch.setProjectionMatrix(camera.combined);
         
         batch.begin();
 
-        batch.draw(gameBg, camera.position.x - (camera.viewportWidth / 2), 0);
+        bgSourceY += 640;
+
+        batch.draw(gameBg.getTexture(), camera.position.x - (camera.viewportWidth / 2), 0,
+                0, bgSourceY, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         for (Sprite giftBox : giftBoxes) {
             giftBox.draw(batch);
         }
 
         batch.draw(player.getSprite().getTexture(), player.getPos().x, player.getPos().y);
-        gameUI.draw(batch);
 
         batch.end();
+
+        gameUIBatch.begin();
+        
+        gameUI.draw(gameUIBatch);
+
+        gameUIBatch.end();
 
         stage.act();
         stage.draw();   
@@ -206,5 +225,6 @@ public class PlayState extends State {
         }
 
         batch.dispose();
+        gameUIBatch.dispose();
     }
 }
